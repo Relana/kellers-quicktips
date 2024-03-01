@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneratorControllerTest {
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    private final String lotto = "lotto";
-    private final String euro = "eurojackpot";
-    private final String exit = "exit";
-    private final String foo = "foo";
+    private static final String LOTTO = "lotto";
+    private static final String EURO = "eurojackpot";
+    private static final String EXIT = "exit";
+    private static final String FOO = "foo";
 
     @BeforeEach
     public void setUp() {
@@ -34,15 +34,15 @@ class GeneratorControllerTest {
         String welcomeMessage = "Willkommen beim Quicktipp-Generator 'Keller's Quicktips'!";
 
         // Input "exit" is used so that the mainLoop method of GeneratorControl is actually exited
-        createGeneratorController(exit,lotto);
+        createGeneratorController(EXIT, LOTTO);
         assertTrue(outputStreamCaptor.toString().contains(welcomeMessage));
         outputStreamCaptor.reset();
 
-        createGeneratorController(exit,euro);
+        createGeneratorController(EXIT, EURO);
         assertTrue(outputStreamCaptor.toString().contains(welcomeMessage));
         outputStreamCaptor.reset();
 
-        createGeneratorController(exit,euro);
+        createGeneratorController(EXIT, EURO);
         assertTrue(outputStreamCaptor.toString().contains(welcomeMessage));
     }
 
@@ -50,23 +50,23 @@ class GeneratorControllerTest {
     void givenGeneratorController_whenExited_thenOutputContainsGoodbye() {
         String goodbyeMessage = "Bis zum nächsten Mal. Viel Glück!";
 
-        createGeneratorController(exit,lotto);
+        createGeneratorController(EXIT, LOTTO);
         assertTrue(outputStreamCaptor.toString().contains(goodbyeMessage));
         outputStreamCaptor.reset();
 
 
-        createGeneratorController(exit,euro);
+        createGeneratorController(EXIT, EURO);
         assertTrue(outputStreamCaptor.toString().contains(goodbyeMessage));
         outputStreamCaptor.reset();
 
-        createGeneratorController(exit, foo);
+        createGeneratorController(EXIT, FOO);
         assertTrue(outputStreamCaptor.toString().contains(goodbyeMessage));
     }
 
     @Test
     void givenGeneratorControllerWithLotto_whenStartGenerationIsCalledWithEurojackpot_thenOutputContainsEurojackpot() {
         // Input "exit" is used so that the mainLoop method of GeneratorControl is actually exited
-        createGeneratorController(exit,lotto).startGeneration(euro);
+        createGeneratorController(EXIT, LOTTO).startGeneration(EURO);
 
         assertTrue(outputStreamCaptor.toString().contains("Die folgenden Eurojackpotzahlen wurden für Sie generiert:"));
     }
@@ -74,7 +74,7 @@ class GeneratorControllerTest {
     @Test
     void givenGeneratorControllerWithLotto_whenInputIsEurojackpot_thenOutputContainsEurojackpot() {
         // Input "exit" is used so that the mainLoop method of GeneratorControl is actually exited
-        createGeneratorController(euro + "\n" + exit,lotto);
+        createGeneratorController(EURO + "\n" + EXIT, LOTTO);
 
         assertTrue(outputStreamCaptor.toString().contains("Die folgenden Eurojackpotzahlen wurden für Sie generiert:"));
     }
@@ -82,7 +82,7 @@ class GeneratorControllerTest {
     @Test
     void givenGeneratorController_whenCreatedWithUnvalidParameter_thenOutputContainsErrormessage() {
         // Input "exit" is used so that the mainLoop method of GeneratorControl is actually exited
-        createGeneratorController(exit, foo);
+        createGeneratorController(EXIT, FOO);
         assertTrue(outputStreamCaptor.toString().contains("Der eingegebene Parameter war ungültig. " +
                                                           "Die gültigen Parameter sind 'lotto' und 'eurojackpot'."));
     }
@@ -90,9 +90,9 @@ class GeneratorControllerTest {
     @Test
     void givenGeneratorControllerWithLotto_whenInputIsUnexpected_thenOutputContainsErrorMessage() {
         // Input "exit" is used so that the mainLoop method of GeneratorControl is actually exited
-        createGeneratorController(foo + "\n" + exit,lotto);
+        createGeneratorController(FOO + "\n" + EXIT, LOTTO);
 
-        assertTrue(outputStreamCaptor.toString().contains("Die Eingabe '" + foo + "' korrespondiert mit keiner der " +
+        assertTrue(outputStreamCaptor.toString().contains("Die Eingabe '" + FOO + "' korrespondiert mit keiner der " +
                                                           "angebotenen Optionen."));
     }
 
