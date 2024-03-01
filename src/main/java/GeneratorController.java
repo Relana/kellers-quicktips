@@ -37,7 +37,7 @@ public class GeneratorController {
         }
     }
 
-    private void startGeneration(String game) {
+    public void startGeneration(String game) {
         switch (game) {
             case "eurojackpot" -> new EurojackpotGenerator().printTip();
             case "lotto" -> new LottoGenerator().printTip();
