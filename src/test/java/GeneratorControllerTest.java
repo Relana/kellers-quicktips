@@ -16,7 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class GeneratorControllerTest {
     private final PrintStream standardOut = System.out;
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+
+    // the scope of unlucky numbers is set to 50, as that is the highest possible value across all lotteries
+    private static final int NUMBER_SCOPE = 50;
+    // the max amount of unlucky numbers
+    private static final int MAX_UNLUCKY_NUMBERS = 6;
+
     private static final String TEST_FILE = "unlucky-numbers-test.txt";
+
+    // menu option keywords
     private static final String LOTTO = "lotto";
     private static final String EURO = "eurojackpot";
     private static final String EXIT = "exit";
@@ -27,10 +35,11 @@ class GeneratorControllerTest {
     private static final String DELETE = "delete unlucky";
     private static final String DONE = "done";
     private static final String ABORT = "abort";
+
+    // some test values
     private static final String THREE_NUMBERS = "13, 26, 39";
     private static final String THREE_MORE_NUMBERS = "14, 28, 42";
     private static final String THREE_DIFFERENT_NUMBERS = "15, 30, 45";
-    private static final int NUMBER_SCOPE = 50;
 
 
     @BeforeEach
@@ -139,12 +148,12 @@ class GeneratorControllerTest {
         // Input "abort"/"done" and "exit" is used so that the loop in updateUnluckyNumbers and the mainLoop method of GeneratorControl is actually exited
         createGeneratorController(ENTER + "\n" + ABORT + "\n" + EXIT, LOTTO);
         assertTrue(outputStreamCaptor.toString().contains("Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit 'done' bestätigen.\n" +
-                "Sie können bis zu sechs Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern."));
+                "Sie können bis zu " + MAX_UNLUCKY_NUMBERS + " Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern."));
         outputStreamCaptor.reset();
 
         createGeneratorController(ENTER + "\n" + DONE + "\n" + EXIT, LOTTO);
         assertTrue(outputStreamCaptor.toString().contains("Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit 'done' bestätigen.\n" +
-                "Sie können bis zu sechs Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern."));
+                "Sie können bis zu " + MAX_UNLUCKY_NUMBERS + " Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern."));
     }
 
     @Test
@@ -270,7 +279,7 @@ class GeneratorControllerTest {
         createGeneratorController(ENTER + "\n" + THREE_NUMBERS + "\n" + THREE_MORE_NUMBERS + "\n" +
                                   THREE_DIFFERENT_NUMBERS + "\n" + DONE + "\n" + EXIT, LOTTO);
 
-        assertTrue(outputStreamCaptor.toString().contains("Es wurden bereits sechs Unglückszahlen eingegegeben. " +
+        assertTrue(outputStreamCaptor.toString().contains("Es wurden bereits " + MAX_UNLUCKY_NUMBERS + " Unglückszahlen eingegegeben. " +
                                                           "Mehr können nicht eingegeben werden."));
     }
 

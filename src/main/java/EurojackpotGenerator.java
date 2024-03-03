@@ -12,8 +12,7 @@ public class EurojackpotGenerator extends GeneratorImpl {
     }
 
     public void printTip() {
-        System.out.println("\n" +
-                           "Die folgenden Eurojackpotzahlen wurden für Sie generiert:\n" +
+        System.out.println("Die folgenden Eurojackpotzahlen wurden für Sie generiert:\n" +
                            generateTip(TIP_SET_SIZE_A, SCOPE_A) + "\n" +
                            generateTip(TIP_SET_SIZE_B, SCOPE_B) + "\n");
     }

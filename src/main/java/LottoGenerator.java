@@ -10,8 +10,7 @@ public class LottoGenerator extends GeneratorImpl {
     }
 
     public void printTip() {
-        System.out.println("\n" +
-                           "Die folgenden Lottozahlen wurden für Sie generiert:\n" +
+        System.out.println("Die folgenden Lottozahlen wurden für Sie generiert:\n" +
                            generateTip(TIP_SET_SIZE, SCOPE) + "\n");
     }
 }
