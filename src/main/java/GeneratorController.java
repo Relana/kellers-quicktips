@@ -17,6 +17,17 @@ public class GeneratorController {
     // the scope of unlucky numbers is set to 50, as that is the highest possible value across all lotteries
     private static final int NUMBER_SCOPE = 50;
 
+    // menu option keywords
+    private static final String LOTTO = "lotto";
+    private static final String EURO = "eurojackpot";
+    private static final String EXIT = "exit";
+    private static final String HELP = "help";
+    private static final String ENTER = "enter unlucky";
+    private static final String VIEW = "view unlucky";
+    private static final String DELETE = "delete unlucky";
+    private static final String DONE = "done";
+    private static final String ABORT = "abort";
+
     public GeneratorController(Scanner scanner, String game) {
         GeneratorController.scanner = scanner;
         System.out.println("Willkommen beim Quicktipp-Generator 'Keller's Quicktips'!\n");
@@ -28,17 +39,17 @@ public class GeneratorController {
     private void mainLoop(){
         String userInput = "-1";
 
-        while (!userInput.equals("exit")) {
+        while (!userInput.equals(EXIT)) {
             userInput = scanner.nextLine();
 
             switch (userInput) {
-                case "lotto" -> startGeneration("lotto");
-                case "eurojackpot" -> startGeneration("eurojackpot");
-                case "enter unlucky" -> updateUnluckyNumbers();
-                case "view unlucky" -> printUnluckyNumber();
-                case "delete unlucky" -> deleteUnluckyNumbers();
-                case "help" -> printOptions();
-                case "exit" -> printGoodbye();
+                case LOTTO -> startGeneration(LOTTO);
+                case EURO -> startGeneration(EURO);
+                case ENTER -> updateUnluckyNumbers();
+                case VIEW -> printUnluckyNumber();
+                case DELETE -> deleteUnluckyNumbers();
+                case HELP -> printOptions();
+                case EXIT -> printGoodbye();
                 default -> {
                     System.out.println("Die Eingabe '" + userInput + "' korrespondiert mit keiner der angebotenen Optionen.");
                     printOptions();
@@ -49,27 +60,25 @@ public class GeneratorController {
 
     public void startGeneration(String game) {
         switch (game) {
-            case "eurojackpot" -> new EurojackpotGenerator(unluckyService).printTip();
-            case "lotto" -> new LottoGenerator(unluckyService).printTip();
+            case LOTTO -> new LottoGenerator(unluckyService).printTip();
+            case EURO -> new EurojackpotGenerator(unluckyService).printTip();
             default -> {
                 System.out.println("Der eingegebene Parameter war ungültig. " +
-                                   "Die gültigen Parameter sind 'lotto' und 'eurojackpot'.\n");
+                                   "Die gültigen Parameter sind '" + LOTTO + "' und '" + EURO + "'.\n");
             }
         }
     }
 
     private void printOptions() {
-        System.out.println("""
-                Geben Sie eines der folgenden Wörter ein, um eine Option auszuwählen:
-                    1. lotto            - Quicktip für Lotto 6aus49 generieren
-                    2. eurojackpot      - Quicktip für Eurojackpot 5aus50 plus 2aus10 generieren
-                    3. enter unlucky    - neue Unglückszahlen speichern (die alten werden gelöscht)
-                    4. view unlucky     - gespeicherte Unglückszahlen anzeigen
-                    5. delete unlucky   - gespeicherte Unglückszahlen löschen
-                    6. help             - Optionen anzeigen
-                    7. exit             - Programm schließen
-                Was würden Sie gerne tun?
-                """);
+        System.out.println("Geben Sie eines der folgenden Wörter ein, um eine Option auszuwählen:\n" +
+                           "    1. " + LOTTO + "            - Quicktip für Lotto 6aus49 generieren\n" +
+                           "    2. " + EURO + "      - Quicktip für Eurojackpot 5aus50 plus 2aus10 generieren\n" +
+                           "    3. " + ENTER + "    - neue Unglückszahlen speichern (die alten werden gelöscht)\n" +
+                           "    4. " + VIEW + "     - gespeicherte Unglückszahlen anzeigen\n" +
+                           "    5. " + DELETE + "   - gespeicherte Unglückszahlen löschen\n" +
+                           "    6. " + HELP + "             - Optionen anzeigen\n" +
+                           "    7. " + EXIT + "             - Programm schließen\n" +
+                           "Was würden Sie gerne tun?\n");
     }
 
     private void updateUnluckyNumbers() {
@@ -77,7 +86,7 @@ public class GeneratorController {
         printUnluckyOptions();
 
         ArrayList<Integer> newUnluckyNumbersList = new ArrayList<>();
-        while (!userInput.equals("done") && !userInput.equals("abort")) {
+        while (!userInput.equals(DONE) && !userInput.equals(ABORT)) {
             userInput = scanner.nextLine();
 
             // this regex checks for single numbers and multiple numbers divided by commas
@@ -89,8 +98,8 @@ public class GeneratorController {
                 }
             } else {
                 switch (userInput) {
-                    case "abort" -> System.out.println("Es wurden keine neuen Unglückszahlen gespeichert.");
-                    case "done" -> {
+                    case ABORT -> System.out.println("Es wurden keine neuen Unglückszahlen gespeichert.");
+                    case DONE -> {
                         if (newUnluckyNumbersList.isEmpty()) {
                             System.out.println("Es wurden keine neuen Unglückszahlen einegeben, die gespeichert werden könnten.");
                         } else {
@@ -98,7 +107,7 @@ public class GeneratorController {
                             System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
                         }
                     }
-                    case "help" -> printUnluckyOptions();
+                    case HELP -> printUnluckyOptions();
                     default -> {
                         System.out.println("Die Eingabe '" + userInput + "' korrespondiert mit keiner der angebotenen Optionen.");
                         printUnluckyOptions();
@@ -115,7 +124,7 @@ public class GeneratorController {
             // todo if a big list of numbers is entered, this is printed for every number after the sixth. It works but it is not pretty.
             System.out.println("Es wurden bereits sechs Unglückszahlen eingegegeben. Mehr können nicht eingegeben werden.\n" +
                     "Die bereits eingegebenen Unglückszahlen sind " + newUnluckyNumbersList + "\n" +
-                    "Sie können diese mit 'done' speichern oder mit 'abort' verwerfen.");
+                    "Sie können diese mit " + DONE + " speichern oder mit '" + ABORT + "' verwerfen.");
         } else if (newUnluckyNumbersList.contains(newNumber)) {
             System.out.println("Die eingegebene Zahl '" + newNumber + "' wurde bereits hinzugefügt");
         } else if (newNumber <= NUMBER_SCOPE){
@@ -127,13 +136,13 @@ public class GeneratorController {
     }
 
     private void printUnluckyOptions() {
-        System.out.println("Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit 'done' bestätigen.\n" +
+        System.out.println("Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit '" + DONE + "' bestätigen.\n" +
                            "Sie können bis zu sechs Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern.\n" +
                            "Geben Sie eines der folgenden Dinge ein, um eine Option auszuwählen:\n" +
                            "    1. [zahl|zahlenreihe]   - Unglückszahl oder Unglückszahlenreihe (getrennt durch Kommata) eingeben, bspw. 13 oder 13,26,39\n" +
-                           "    2. abort                - keine neuen Unglückszahlen speichern\n" +
-                           "    3. done                 - eingegebene Unglückszahlen speichern\n" +
-                           "    4. help                 - Optionen anzeigen\n" +
+                           "    2. " + ABORT + "                - keine neuen Unglückszahlen speichern\n" +
+                           "    3. " + DONE + "                 - eingegebene Unglückszahlen speichern\n" +
+                           "    4. " + HELP + "                 - Optionen anzeigen\n" +
                            "Was würden Sie gerne tun?\n");
     }
 
