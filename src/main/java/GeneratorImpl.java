@@ -42,6 +42,10 @@ public class GeneratorImpl implements Generator {
         return number;
     }
 
+    /**
+     * Getter method for unluckyService field
+     * @return instance of UnluckyNumbersService saved in field unluckyService of this object
+     */
     public static UnluckyNumbersService getUnluckyService() {
         return unluckyService;
     }

@@ -20,43 +20,58 @@ class GeneratorImplTest {
     private static final int EURO_SCOPE_2 = 10;
     private static final int EURO_SET_SIZE_2 = 2;
 
+    private static final int UNLUCKY_NUMBER = 13;
+
     private static final String TEST_FILE = "unlucky-numbers-test.txt";
+    private static final GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
 
     @Test
-    void givenGeneratorImpl_whenGenerateTipIsCalled_thenReturnValueSizeIsAsExpected() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
-
+    void givenGenerateTipIsCalled_whenParametersAreLotto_thenReturnValueSizeIsAsExpected() {
         ArrayList<Integer> tip = generator.generateTip(LOTTO_SET_SIZE, LOTTO_SCOPE);
         assertEquals(LOTTO_SET_SIZE, tip.size());
+    }
 
-        tip = generator.generateTip(EURO_SET_SIZE, EURO_SCOPE);
+    @Test
+    void givenGenerateTipIsCalled_whenParametersAreEuro_thenReturnValueSizeIsAsExpected() {
+        ArrayList<Integer> tip = generator.generateTip(EURO_SET_SIZE, EURO_SCOPE);
         assertEquals(EURO_SET_SIZE, tip.size());
+    }
 
-        tip = generator.generateTip(EURO_SET_SIZE_2, EURO_SCOPE_2);
+    @Test
+    void givenGenerateTipIsCalled_whenParametersAreEuro2_thenReturnValueSizeIsAsExpected() {
+        ArrayList<Integer> tip = generator.generateTip(EURO_SET_SIZE_2, EURO_SCOPE_2);
         assertEquals(EURO_SET_SIZE_2, tip.size());
     }
 
     @Test
-    void givenGeneratorImpl_whenGenerateTipIsCalled_thenReturnValuesAreInScope() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
-
+    void givenGenerateTipIsCalled_whenParametersAreLotto_thenReturnValuesAreInScope() {
         ArrayList<Integer> tip = generator.generateTip(LOTTO_SET_SIZE, LOTTO_SCOPE);
         for (int number : tip) {
             assertTrue(number < LOTTO_SCOPE + 1);
         }
-        tip = generator.generateTip(EURO_SET_SIZE, EURO_SCOPE);
+    }
+
+    @Test
+    void givenGenerateTipIsCalled_whenParametersAreEuro_thenReturnValuesAreInScope() {
+        ArrayList<Integer> tip = generator.generateTip(EURO_SET_SIZE, EURO_SCOPE);
         for (int number : tip) {
             assertTrue(number < EURO_SCOPE + 1);
         }
-        tip = generator.generateTip(EURO_SET_SIZE_2, EURO_SCOPE_2);
+    }
+
+    @Test
+    void givenGenerateTipIsCalled_whenParametersAreEuro2_thenReturnValuesAreInScope() {
+        ArrayList<Integer> tip = generator.generateTip(EURO_SET_SIZE_2, EURO_SCOPE_2);
         for (int number : tip) {
             assertTrue(number < EURO_SCOPE_2 + 1);
         }
     }
 
     @Test
-    void givenGeneratorImpl_whenGenerateTipIsCalled_thenReturnValuesAreNotUnlucky() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
+    void givenUnluckyNumbersAreSaved_whenGenerateTipIsCalled_thenReturnValuesAreNotUnlucky() {
+        ArrayList<Integer> newUnluckyNumbers = new ArrayList<>();
+        newUnluckyNumbers.add(UNLUCKY_NUMBER);
+        GeneratorImpl.getUnluckyService().saveUnluckyNumbers(newUnluckyNumbers);
 
         ArrayList<Integer> unluckyNumbers = GeneratorImpl.getUnluckyService().getUnluckyNumbersList();
 
@@ -75,9 +90,7 @@ class GeneratorImplTest {
     }
 
     @Test
-    void givenGeneratorImpl_whenUnluckyListIsFullAndGenerateTipIsCalled_thenReturnValuesAreTheOnlyRemainingOnes() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
-
+    void givenUnluckyListIsAlmostFull_whenAndGenerateTipIsCalled_thenReturnValuesAreTheOnlyRemainingLuckyNumbers() {
         ArrayList<Integer> unluckyList = new ArrayList<>();
         for (int i = 1; i < 44; i++) unluckyList.add(i);
         UnluckyNumbersService unluckyService = GeneratorImpl.getUnluckyService();
@@ -100,8 +113,7 @@ class GeneratorImplTest {
     }
 
     @Test
-    void givenGeneratorImpl_whenCheckForDuplicatesIsCalled_thenReturnValueIsUnique() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
+    void givenAListOfNumbersAndAnotherNumber_whenCheckForDuplicatesIsCalled_thenReturnValueIsNotInList() {
         Random random = new Random();
 
         ArrayList<Integer> tipList = generator.generateTip(LOTTO_SET_SIZE, LOTTO_SCOPE);
@@ -118,8 +130,7 @@ class GeneratorImplTest {
     }
 
     @Test
-    void givenGeneratorImpl_whenCheckForDuplicatesIsCalled_thenReturnValueIsInScope() {
-        GeneratorImpl generator = new GeneratorImpl(new UnluckyNumbersService(TEST_FILE));
+    void givenAListOfNumbersAndAnotherNumber_whenCheckForDuplicatesIsCalled_thenReturnValueIsInScope() {
         Random random = new Random();
 
         ArrayList<Integer> tipList = generator.generateTip(LOTTO_SET_SIZE, LOTTO_SCOPE);
