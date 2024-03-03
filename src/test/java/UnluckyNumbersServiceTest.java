@@ -13,6 +13,8 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//todo refactor for duplicate code
+//todo add comments?
 class UnluckyNumbersServiceTest {
     private static final String TEST_FILE = "unlucky-numbers-test.txt";
 
@@ -20,7 +22,7 @@ class UnluckyNumbersServiceTest {
     void givenUnluckyNumbersService_whenSetUnluckyNumbersIsCalled_thenNumbersAreWrittenToFile() {
         UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
         ArrayList<Integer> newUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
-        unluckyNumbersService.setUnluckyNumbers(newUnluckyNumbers);
+        unluckyNumbersService.saveUnluckyNumbers(newUnluckyNumbers);
 
         File unluckyFile = new File(TEST_FILE);
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
@@ -55,7 +57,7 @@ class UnluckyNumbersServiceTest {
             e.printStackTrace();
         }
 
-        ArrayList<Integer> savedUnluckyNumbers = unluckyNumbersService.getUnluckyNumbers();
+        ArrayList<Integer> savedUnluckyNumbers = unluckyNumbersService.getUnluckyNumbersList();
 
         assertEquals(newUnluckyNumbers, savedUnluckyNumbers);
     }
@@ -64,7 +66,7 @@ class UnluckyNumbersServiceTest {
     void givenUnluckyNumbersService_whenDeleteUnluckyNumbersIsCalled_thenNumbersAreDeletedInFile() {
         UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
         ArrayList<Integer> newUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
-        unluckyNumbersService.setUnluckyNumbers(newUnluckyNumbers);
+        unluckyNumbersService.saveUnluckyNumbers(newUnluckyNumbers);
         unluckyNumbersService.deleteUnluckyNumbers();
 
         File unluckyFile = new File(TEST_FILE);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//todo write doc
 public class UnluckyNumbersService {
 
     private File unluckyNumbers;
@@ -26,7 +27,7 @@ public class UnluckyNumbersService {
         }
     }
 
-    public void setUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
+    public void saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
         try {
             FileWriter writer = new FileWriter(unluckyNumbers, false);
             String newUnluckyString = "";
@@ -35,14 +36,13 @@ public class UnluckyNumbersService {
             }
             writer.write(newUnluckyString);
             writer.close();
-            System.out.println("Die neuen Unglückszahlen wurden gespeichert.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
 
-    public ArrayList<Integer> getUnluckyNumbers(){
+    public ArrayList<Integer> getUnluckyNumbersList(){
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
 
         try (Scanner reader = new Scanner(unluckyNumbers).useDelimiter(",")) {
@@ -62,10 +62,13 @@ public class UnluckyNumbersService {
             FileWriter writer = new FileWriter(unluckyNumbers, false);
             writer.write("");
             writer.close();
-            System.out.println("Die Unglückszahlen wurden gelöscht.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
+    }
+
+    public boolean unluckyNumbersIsEmpty(){
+        return getUnluckyNumbersList().isEmpty();
     }
 }
