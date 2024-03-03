@@ -12,13 +12,16 @@ import java.util.Scanner;
 public class GeneratorController {
 
     private static Scanner scanner;
-
     private static UnluckyNumbersService unluckyService = new UnluckyNumbersService("unlucky-numbers.txt");
+
+    // the scope of unlucky numbers is set to 50, as that is the highest possible value across all lotteries
+    private static final int NUMBER_SCOPE = 50;
 
     public GeneratorController(Scanner scanner, String game) {
         GeneratorController.scanner = scanner;
         System.out.println("Willkommen beim Quicktipp-Generator 'Keller's Quicktips'!\n");
         startGeneration(game);
+        printOptions();
         mainLoop();
     }
 
@@ -32,8 +35,9 @@ public class GeneratorController {
                 case "lotto" -> startGeneration("lotto");
                 case "eurojackpot" -> startGeneration("eurojackpot");
                 case "enter unlucky" -> updateUnluckyNumbers();
-                case "view unlucky" -> displayUnluckyNumber();
+                case "view unlucky" -> printUnluckyNumber();
                 case "delete unlucky" -> deleteUnluckyNumbers();
+                case "help" -> printOptions();
                 case "exit" -> printGoodbye();
                 default -> {
                     System.out.println("Die Eingabe '" + userInput + "' korrespondiert mit keiner der angebotenen Optionen.");
@@ -44,7 +48,6 @@ public class GeneratorController {
     }
 
     public void startGeneration(String game) {
-        //todo unlucky numbers berücksichtigen
         switch (game) {
             case "eurojackpot" -> new EurojackpotGenerator(unluckyService).printTip();
             case "lotto" -> new LottoGenerator(unluckyService).printTip();
@@ -53,7 +56,6 @@ public class GeneratorController {
                                    "Die gültigen Parameter sind 'lotto' und 'eurojackpot'.\n");
             }
         }
-        printOptions();
     }
 
     private void printOptions() {
@@ -64,40 +66,39 @@ public class GeneratorController {
                     3. enter unlucky    - neue Unglückszahlen speichern (die alten werden gelöscht)
                     4. view unlucky     - gespeicherte Unglückszahlen anzeigen
                     5. delete unlucky   - gespeicherte Unglückszahlen löschen
-                    6. exit             - Programm schließen
+                    6. help             - Optionen anzeigen
+                    7. exit             - Programm schließen
                 Was würden Sie gerne tun?
                 """);
     }
 
     private void updateUnluckyNumbers() {
-        // todo refactor this method
-        ArrayList<Integer> newUnluckyNumberList = new ArrayList<>();
         String userInput = "-1";
         printUnluckyOptions();
 
+        ArrayList<Integer> newUnluckyNumbersList = new ArrayList<>();
         while (!userInput.equals("done") && !userInput.equals("abort")) {
             userInput = scanner.nextLine();
 
-            if (userInput.matches("[0-9]+")) {
-                newUnluckyNumberList.add(Integer.valueOf(userInput));
-            } else if (userInput.matches("[0-9]+(\\s*,\\s*[0-9]+)+")) {
-                String[] newNumbers = userInput.split("\\s*,\\s*");
+            // this regex checks for single numbers and multiple numbers divided by commas
+            // whitespaces at both ends and between a number and comma are accepted
+            if (userInput.matches("\\s*[0-9]+(\\s*,\\s*[0-9]+)*\\s*")) {
+                String[] newNumbers = userInput.trim().split("\\s*,\\s*");
                 for (String n : newNumbers){
-                    newUnluckyNumberList.add(Integer.valueOf(n));
+                    checkNumberAndAddToUnluckyList(n, newUnluckyNumbersList);
                 }
             } else {
                 switch (userInput) {
                     case "abort" -> System.out.println("Es wurden keine neuen Unglückszahlen gespeichert.");
                     case "done" -> {
-                        if (newUnluckyNumberList.isEmpty()) {
+                        if (newUnluckyNumbersList.isEmpty()) {
                             System.out.println("Es wurden keine neuen Unglückszahlen einegeben, die gespeichert werden könnten.");
                         } else {
-                            // todo check for amount of new numbers (max 6)
-                            // todo check for duplicates in user input
-                            unluckyService.saveUnluckyNumbers(newUnluckyNumberList);
-                            System.out.println("Die neuen Unglückszahlen wurden gespeichert.");
+                            unluckyService.saveUnluckyNumbers(newUnluckyNumbersList);
+                            System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
                         }
                     }
+                    case "help" -> printUnluckyOptions();
                     default -> {
                         System.out.println("Die Eingabe '" + userInput + "' korrespondiert mit keiner der angebotenen Optionen.");
                         printUnluckyOptions();
@@ -108,31 +109,44 @@ public class GeneratorController {
         printOptions();
     }
 
-    private void printUnluckyOptions() {
-        System.out.println("""
-                Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit 'done' bestätigen.
-                Sie können bis zu sechs Unglückszahlen speichern.
-                Geben Sie eines der folgenden Dinge ein, um eine Option auszuwählen:
-                    1. [zahl|zahlenreihe]   - Unglückszahl oder Unglückszahlenreihe (getrennt durch Kommata) eingeben, bspw. 13 oder 13,26,39
-                    2. abort                - keine neuen Unglückszahlen speichern
-                    3. done                 - eingegebene Unglückszahlen speichern
-                Was würden Sie gerne tun?
-                """);
+    private void checkNumberAndAddToUnluckyList(String number, ArrayList<Integer> newUnluckyNumbersList) {
+        int newNumber = Integer.parseInt(number);
+        if (newUnluckyNumbersList.size() == 6) {
+            // todo if a big list of numbers is entered, this is printed for every number after the sixth. It works but it is not pretty.
+            System.out.println("Es wurden bereits sechs Unglückszahlen eingegegeben. Mehr können nicht eingegeben werden.\n" +
+                    "Die bereits eingegebenen Unglückszahlen sind " + newUnluckyNumbersList + "\n" +
+                    "Sie können diese mit 'done' speichern oder mit 'abort' verwerfen.");
+        } else if (newUnluckyNumbersList.contains(newNumber)) {
+            System.out.println("Die eingegebene Zahl '" + newNumber + "' wurde bereits hinzugefügt");
+        } else if (newNumber <= NUMBER_SCOPE){
+            newUnluckyNumbersList.add(newNumber);
+        } else {
+            System.out.println("Die eingegebene Zahl '" + newNumber + "' liegt nicht im gültigen Zahlenraum von " +
+                    "1-" + NUMBER_SCOPE + " und wird nicht den neuen Unglückszahlen hinzugefügt.");
+        }
     }
 
-    private void displayUnluckyNumber() {
+    private void printUnluckyOptions() {
+        System.out.println("Um neue Unglückszahlen zu speichern, müssen Sie zunächst die Zahlen eingeben und im Anschluss mit 'done' bestätigen.\n" +
+                           "Sie können bis zu sechs Unglückszahlen, die zwischen 1-" + NUMBER_SCOPE + " liegen, speichern.\n" +
+                           "Geben Sie eines der folgenden Dinge ein, um eine Option auszuwählen:\n" +
+                           "    1. [zahl|zahlenreihe]   - Unglückszahl oder Unglückszahlenreihe (getrennt durch Kommata) eingeben, bspw. 13 oder 13,26,39\n" +
+                           "    2. abort                - keine neuen Unglückszahlen speichern\n" +
+                           "    3. done                 - eingegebene Unglückszahlen speichern\n" +
+                           "    4. help                 - Optionen anzeigen\n" +
+                           "Was würden Sie gerne tun?\n");
+    }
+
+    private void printUnluckyNumber() {
         ArrayList<Integer> unluckyNumberList = unluckyService.getUnluckyNumbersList();
 
         if (unluckyNumberList.isEmpty()) System.out.println("Es gibt keine gespeicherten Unglückszahlen.\n");
         else System.out.println("Die gespeicherten Unglückszahlen sind: " + unluckyNumberList);
-
-        printOptions();
     }
 
     private void deleteUnluckyNumbers() {
         unluckyService.deleteUnluckyNumbers();
         System.out.println("Die Unglückszahlen wurden gelöscht.");
-        printOptions();
     }
 
     private void printGoodbye() {
