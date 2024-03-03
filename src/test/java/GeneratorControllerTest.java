@@ -1,6 +1,5 @@
 package test.java;
 
-import main.java.Generator;
 import main.java.GeneratorController;
 import main.java.UnluckyNumbersService;
 import org.junit.jupiter.api.AfterEach;
@@ -138,7 +137,7 @@ class GeneratorControllerTest {
 
     @Test
     void givenEnterUnluckyWasSelected_whenInputIsValidAndDoneIsSelected_thenUnluckyNumbersAreActuallySaved() {
-        // Input "abort" and "exit" is used so that the loop in updateUnluckyNumbers and the mainLoop method of GeneratorControl is actually exited
+        // Input "done" and "exit" is used so that the loop in updateUnluckyNumbers and the mainLoop method of GeneratorControl is actually exited
         createGeneratorController(ENTER + "\n" + THREE_NUMBERS + "\n" + DONE + "\n" + EXIT, LOTTO);
 
         assertEquals("[" + THREE_NUMBERS + "]",

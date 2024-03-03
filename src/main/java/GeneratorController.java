@@ -46,8 +46,8 @@ public class GeneratorController {
     public void startGeneration(String game) {
         //todo unlucky numbers berücksichtigen
         switch (game) {
-            case "eurojackpot" -> new EurojackpotGenerator().printTip();
-            case "lotto" -> new LottoGenerator().printTip();
+            case "eurojackpot" -> new EurojackpotGenerator(unluckyService).printTip();
+            case "lotto" -> new LottoGenerator(unluckyService).printTip();
             default -> {
                 System.out.println("Der eingegebene Parameter war ungültig. " +
                                    "Die gültigen Parameter sind 'lotto' und 'eurojackpot'.\n");
