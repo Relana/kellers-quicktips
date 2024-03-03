@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class GeneratorController {
 
     private static Scanner scanner;
-    private static UnluckyNumbersService unluckyService = new UnluckyNumbersService("unlucky-numbers.txt");
+    private static UnluckyNumbersService unluckyService;
 
     // the scope of unlucky numbers is set to 50, as that is the highest possible value across all lotteries
     private static final int NUMBER_SCOPE = 50;
@@ -30,8 +30,9 @@ public class GeneratorController {
     private static final String DONE = "done";
     private static final String ABORT = "abort";
 
-    public GeneratorController(Scanner scanner, String game) {
+    public GeneratorController(Scanner scanner, UnluckyNumbersService unluckyNumbersService, String game) {
         GeneratorController.scanner = scanner;
+        GeneratorController.unluckyService = unluckyNumbersService;
         System.out.println("Willkommen beim Quicktipp-Generator 'Keller's Quicktips'!\n");
         startGeneration(game);
         printOptions();
@@ -120,7 +121,7 @@ public class GeneratorController {
                     case ABORT -> System.out.println("Es wurden keine neuen Unglückszahlen gespeichert.");
                     case DONE -> {
                         if (newUnluckyNumbersList.isEmpty()) {
-                            System.out.println("Es wurden keine neuen Unglückszahlen einegeben, die gespeichert werden könnten.");
+                            System.out.println("Es wurden keine neuen Unglückszahlen eingegeben, die gespeichert werden könnten.");
                         } else {
                             saveUnluckyNumbers(newUnluckyNumbersList);
                         }
@@ -216,7 +217,7 @@ public class GeneratorController {
 
     /**
      * Getter method for unluckyService field
-     * @return unluckyService of this object
+     * @return instance of UnluckyNumbersService saved in field unluckyService of this object
      */
     public static UnluckyNumbersService getUnluckyService() {
         return unluckyService;
