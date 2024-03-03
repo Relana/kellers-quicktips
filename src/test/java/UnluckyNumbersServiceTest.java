@@ -51,7 +51,6 @@ class UnluckyNumbersServiceTest {
             }
             writer.write(newUnluckyString);
             writer.close();
-            System.out.println("Die neuen Unglückszahlen wurden gespeichert.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
