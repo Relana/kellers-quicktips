@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-//todo write doc
+/**
+ * UnluckyNumbersService is responsible for writing, retrieving and deleting (unlucky) numbers in a file.
+ */
 public class UnluckyNumbersService {
 
     private File unluckyNumbers;
@@ -27,6 +29,11 @@ public class UnluckyNumbersService {
         }
     }
 
+    /**
+     * saveUnluckyNumbers takes a list of new numbers and writes them to the unluckyNumbers file,
+     * separated by commas. Old numbers are overwritten
+     * @param newUnluckyNumbers - list of numbers to be saved
+     */
     public void saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
         try {
             FileWriter writer = new FileWriter(unluckyNumbers, false);
@@ -42,6 +49,10 @@ public class UnluckyNumbersService {
         }
     }
 
+    /**
+     * getUnluckyNumbersList reads the numbers saved in the unluckyNumbers file and returns them as an ArrayList
+     * @return list of saved unlucky numbers
+     */
     public ArrayList<Integer> getUnluckyNumbersList(){
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
 
@@ -57,6 +68,10 @@ public class UnluckyNumbersService {
         return savedUnluckyNumbers;
     }
 
+    /**
+     * deleteUnluckyNumbers deletes the saved numbers by writing with an empty string over the saved numbers in the
+     * unluckyNumbers file.
+     */
     public void deleteUnluckyNumbers(){
         try {
             FileWriter writer = new FileWriter(unluckyNumbers, false);

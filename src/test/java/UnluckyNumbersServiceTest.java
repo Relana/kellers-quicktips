@@ -13,21 +13,38 @@ import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//todo refactor for duplicate code
-//todo add comments?
 class UnluckyNumbersServiceTest {
     private static final String TEST_FILE = "unlucky-numbers-test.txt";
+    private static final UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
+    private static final ArrayList<Integer> someUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
 
     @Test
-    void givenUnluckyNumbersService_whenSetUnluckyNumbersIsCalled_thenNumbersAreWrittenToFile() {
-        UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
-        ArrayList<Integer> newUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
-        unluckyNumbersService.saveUnluckyNumbers(newUnluckyNumbers);
+    void givenSaveUnluckyNumbersIsCalled_whenNumbersAreReadFromFile_thenNumbersAreTheSame() {
+        unluckyNumbersService.saveUnluckyNumbers(someUnluckyNumbers);
+        ArrayList<Integer> savedUnluckyNumbers = getNumbersFromFile();
+        assertEquals(someUnluckyNumbers, savedUnluckyNumbers);
+    }
 
-        File unluckyFile = new File(TEST_FILE);
+    @Test
+    void givenFileIsFilledWithUnluckyNumbers_whenGetUnluckyNumbersIsCalled_thenNumbersAreReadCorrectly() {
+        fillFileWithNumbers();
+        ArrayList<Integer> savedUnluckyNumbers = unluckyNumbersService.getUnluckyNumbersList();
+        assertEquals(someUnluckyNumbers, savedUnluckyNumbers);
+    }
+
+    @Test
+    void givenFileIsFullOfUnluckyNumbers_whenDeleteUnluckyNumbersIsCalled_thenNumbersAreDeletedInFile() {
+        unluckyNumbersService.saveUnluckyNumbers(someUnluckyNumbers);
+        unluckyNumbersService.deleteUnluckyNumbers();
+
+        ArrayList<Integer> savedUnluckyNumbers = getNumbersFromFile();
+        assertEquals(0, savedUnluckyNumbers.size());
+    }
+
+    private ArrayList<Integer> getNumbersFromFile() {
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
-        try (Scanner reader = new Scanner(unluckyFile).useDelimiter(",")) {
-            while (reader.hasNext()) {
+        try (Scanner reader = new Scanner(new File(TEST_FILE)).useDelimiter(",")) {
+            while (reader.hasNextInt()) {
                 int nextNumber = Integer.parseInt(reader.next());
                 savedUnluckyNumbers.add(nextNumber);
             }
@@ -35,18 +52,15 @@ class UnluckyNumbersServiceTest {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        assertEquals(newUnluckyNumbers, savedUnluckyNumbers);
+        return savedUnluckyNumbers;
     }
 
-    @Test
-    void givenUnluckyNumbersService_whenGetUnluckyNumbersIsCalled_thenNumbersAreReadCorrectly() {
-        UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
-        ArrayList<Integer> newUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
+    private void fillFileWithNumbers() {
         File unluckyFile = new File(TEST_FILE);
         try {
             FileWriter writer = new FileWriter(unluckyFile, false);
             String newUnluckyString = "";
-            for (int n : newUnluckyNumbers) {
+            for (int n : someUnluckyNumbers) {
                 newUnluckyString = newUnluckyString + n +",";
             }
             writer.write(newUnluckyString);
@@ -55,30 +69,5 @@ class UnluckyNumbersServiceTest {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-
-        ArrayList<Integer> savedUnluckyNumbers = unluckyNumbersService.getUnluckyNumbersList();
-
-        assertEquals(newUnluckyNumbers, savedUnluckyNumbers);
-    }
-
-    @Test
-    void givenUnluckyNumbersService_whenDeleteUnluckyNumbersIsCalled_thenNumbersAreDeletedInFile() {
-        UnluckyNumbersService unluckyNumbersService = new UnluckyNumbersService(TEST_FILE);
-        ArrayList<Integer> newUnluckyNumbers = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 13));
-        unluckyNumbersService.saveUnluckyNumbers(newUnluckyNumbers);
-        unluckyNumbersService.deleteUnluckyNumbers();
-
-        File unluckyFile = new File(TEST_FILE);
-        ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
-        try (Scanner reader = new Scanner(unluckyFile).useDelimiter(",")) {
-            while (reader.hasNext()) {
-                int nextNumber = Integer.parseInt(reader.next());
-                savedUnluckyNumbers.add(nextNumber);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        assertEquals(0, savedUnluckyNumbers.size());
     }
 }
