@@ -26,6 +26,11 @@ class UnluckyNumbersServiceTest {
     }
 
     @Test
+    void givenSaveUnluckyNumbersIsCalled_whenOperationWasSuccessful_thenReturnValueIsTrue() {
+        assertTrue(unluckyNumbersService.saveUnluckyNumbers(someUnluckyNumbers));
+    }
+
+    @Test
     void givenFileIsFilledWithUnluckyNumbers_whenGetUnluckyNumbersIsCalled_thenNumbersAreReadCorrectly() {
         fillFileWithNumbers();
         ArrayList<Integer> savedUnluckyNumbers = unluckyNumbersService.getUnluckyNumbersList();
@@ -41,6 +46,14 @@ class UnluckyNumbersServiceTest {
         assertEquals(0, savedUnluckyNumbers.size());
     }
 
+    @Test
+    void givenFileIsFullOfUnluckyNumbers_whenDeleteUnluckyNumbersWasSuccessful_thenReturnValueIsTrue() {
+        unluckyNumbersService.saveUnluckyNumbers(someUnluckyNumbers);
+        boolean success = unluckyNumbersService.deleteUnluckyNumbers();
+
+        assertTrue(success);
+    }
+
     private ArrayList<Integer> getNumbersFromFile() {
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
         try (Scanner reader = new Scanner(new File(TEST_FILE)).useDelimiter(",")) {
@@ -49,7 +62,7 @@ class UnluckyNumbersServiceTest {
                 savedUnluckyNumbers.add(nextNumber);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while attempting to read from " + TEST_FILE + ".");
             e.printStackTrace();
         }
         return savedUnluckyNumbers;
@@ -57,16 +70,14 @@ class UnluckyNumbersServiceTest {
 
     private void fillFileWithNumbers() {
         File unluckyFile = new File(TEST_FILE);
-        try {
-            FileWriter writer = new FileWriter(unluckyFile, false);
+        try (FileWriter writer = new FileWriter(unluckyFile, false)) {
             String newUnluckyString = "";
             for (int n : someUnluckyNumbers) {
                 newUnluckyString = newUnluckyString + n +",";
             }
             writer.write(newUnluckyString);
-            writer.close();
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while attempting to write to " + TEST_FILE + ".");
             e.printStackTrace();
         }
     }

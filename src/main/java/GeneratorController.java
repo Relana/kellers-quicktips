@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 /**
  * GeneratorController is responsible for reading and responding to user interaction.
@@ -200,8 +201,11 @@ public class GeneratorController {
             System.out.println("Es wurden keine neuen Unglückszahlen eingegeben, die gespeichert werden könnten.");
         } else {
             Collections.sort(newUnluckyNumbersList);
-            unluckyService.saveUnluckyNumbers(newUnluckyNumbersList);
-            System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
+            if (unluckyService.saveUnluckyNumbers(newUnluckyNumbersList)){
+                System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
+            } else {
+                System.out.println("Die neuen Unglückszahlen konnten nicht gespeichert werden.");
+            }
         }
     }
 
@@ -224,10 +228,12 @@ public class GeneratorController {
      * printUnluckyNumbers prints either the saved unlucky numbers or the information that no unlucky numbers have been saved.
      */
     private void printUnluckyNumbers() {
-        if (unluckyService.unluckyNumbersIsEmpty()) {
+        ArrayList<Integer> unluckyNumberList = unluckyService.getUnluckyNumbersList();
+        if (unluckyNumberList == null) {
+            System.out.println("Die gespeicherten Unglückszahlen konnten nicht gelesen werden.");
+        } else if (unluckyNumberList.isEmpty()) {
             System.out.println("Es gibt keine gespeicherten Unglückszahlen.\n");
         } else {
-            ArrayList<Integer> unluckyNumberList = unluckyService.getUnluckyNumbersList();
             System.out.println("Die gespeicherten Unglückszahlen sind: " + unluckyNumberList);
         }
     }
@@ -236,8 +242,11 @@ public class GeneratorController {
      * deleteUnluckyNumbers deletes the saved unlucky numbers.
      */
     private void deleteUnluckyNumbers() {
-        unluckyService.deleteUnluckyNumbers();
-        System.out.println("Die Unglückszahlen wurden gelöscht.");
+        if (unluckyService.deleteUnluckyNumbers()) {
+            System.out.println("Die Unglückszahlen wurden gelöscht.");
+        } else {
+            System.out.println("Die Unglückszahlen konnten nicht gelöscht werden.");
+        }
 
     }
 

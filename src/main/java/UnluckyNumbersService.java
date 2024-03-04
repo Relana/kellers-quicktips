@@ -24,7 +24,7 @@ public class UnluckyNumbersService {
                 System.out.println("txt existiert bereits.");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while creating " + this.getClass().getName() + " with path " + fileName + ".");
             e.printStackTrace();
         }
     }
@@ -33,25 +33,27 @@ public class UnluckyNumbersService {
      * saveUnluckyNumbers takes a list of new numbers and writes them to the unluckyNumbers file,
      * separated by commas. Old numbers are overwritten
      * @param newUnluckyNumbers - list of numbers to be saved
+     * @return bool value - true if saving was successful, otherwise false
      */
-    public void saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
-        try {
-            FileWriter writer = new FileWriter(unluckyNumbers, false);
+    public boolean saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
+        boolean success = false;
+        try (FileWriter writer = new FileWriter(unluckyNumbers, false)) {
             String newUnluckyString = "";
             for (int n : newUnluckyNumbers) {
-                newUnluckyString = newUnluckyString + n +",";
+                newUnluckyString = newUnluckyString + n + ",";
             }
             writer.write(newUnluckyString);
-            writer.close();
+            success = true;
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while attempting to write to " + unluckyNumbers.getName() + ".");
             e.printStackTrace();
         }
+        return success;
     }
 
     /**
      * getUnluckyNumbersList reads the numbers saved in the unluckyNumbers file and returns them as an ArrayList
-     * @return list of saved unlucky numbers
+     * @return list of saved unlucky numbers, is null if numbers could not be read
      */
     public ArrayList<Integer> getUnluckyNumbersList(){
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
@@ -62,7 +64,8 @@ public class UnluckyNumbersService {
                 savedUnluckyNumbers.add(nextNumber);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            savedUnluckyNumbers = null;
+            System.out.println("An error occurred while attempting to read from " + unluckyNumbers.getName() + ".");
             e.printStackTrace();
         }
         return savedUnluckyNumbers;
@@ -71,16 +74,18 @@ public class UnluckyNumbersService {
     /**
      * deleteUnluckyNumbers deletes the saved numbers by writing with an empty string over the saved numbers in the
      * unluckyNumbers file.
+     * @return bool value - true if deletion was successful, otherwise false
      */
-    public void deleteUnluckyNumbers(){
-        try {
-            FileWriter writer = new FileWriter(unluckyNumbers, false);
+    public boolean deleteUnluckyNumbers(){
+        boolean success = false;
+        try(FileWriter writer = new FileWriter(unluckyNumbers, false)) {
             writer.write("");
-            writer.close();
+            success = true;
         } catch (IOException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while attempting to delete numbers in " + unluckyNumbers.getName() + ".");
             e.printStackTrace();
         }
+        return success;
     }
 
     public boolean unluckyNumbersIsEmpty(){
