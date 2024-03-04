@@ -21,7 +21,9 @@ public class QuicktipGenerator {
      * @param args - are passed down to GeneratorController
      */
     public static void main(String[] args) {
+        QuicktipLogger.initialize();
         new GeneratorController(SCANNER, new UnluckyNumbersService(NUMBER_FILE), args);
         SCANNER.close();
+        QuicktipLogger.info("Application was closed successfully.");
     }
 }

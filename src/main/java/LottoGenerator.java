@@ -7,10 +7,12 @@ public class LottoGenerator extends GeneratorImpl {
 
     public LottoGenerator(UnluckyNumbersService service) {
         super(service);
+        QuicktipLogger.info("LottoGenerator was instantiated.");
     }
 
     public void printTip() {
         System.out.println("Die folgenden Lottozahlen wurden für Sie generiert:\n" +
                            generateTip(TIP_SET_SIZE, SCOPE) + "\n");
+        QuicktipLogger.info("New Lotto quicktip was printed to the command line.");
     }
 }

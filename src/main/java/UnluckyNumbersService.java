@@ -15,17 +15,16 @@ public class UnluckyNumbersService {
     private File unluckyNumbers;
 
     public UnluckyNumbersService(String fileName){
+        QuicktipLogger.info("UnluckyNumbersService was instantiated.");
         try {
             unluckyNumbers = new File(fileName);
             if (unluckyNumbers.createNewFile()) {
-                // todo diese Infos in logger, nicht an user
-                System.out.println("txt erstellt: " + unluckyNumbers.getName());
+                QuicktipLogger.info("txt file for saving unlucky numbers was created.");
             } else {
-                System.out.println("txt existiert bereits.");
+                QuicktipLogger.info("txt file for saving unlucky numbers already existed.");
             }
         } catch (IOException e) {
-            System.out.println("An error occurred while creating " + this.getClass().getName() + " with path " + fileName + ".");
-            e.printStackTrace();
+            QuicktipLogger.warn("An error occurred while creating " + this.getClass().getName() + " with path " + fileName + ".", e);
         }
     }
 
@@ -36,6 +35,7 @@ public class UnluckyNumbersService {
      * @return bool value - true if saving was successful, otherwise false
      */
     public boolean saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbers){
+        QuicktipLogger.info("Attempting to save new unlucky numbers.");
         boolean success = false;
         try (FileWriter writer = new FileWriter(unluckyNumbers, false)) {
             String newUnluckyString = "";
@@ -44,9 +44,9 @@ public class UnluckyNumbersService {
             }
             writer.write(newUnluckyString);
             success = true;
+            QuicktipLogger.info("Successfully saved new unlucky numbers.");
         } catch (IOException e) {
-            System.out.println("An error occurred while attempting to write to " + unluckyNumbers.getName() + ".");
-            e.printStackTrace();
+            QuicktipLogger.warn("An error occurred while attempting to write to " + unluckyNumbers.getName() + ".", e);
         }
         return success;
     }
@@ -56,6 +56,7 @@ public class UnluckyNumbersService {
      * @return list of saved unlucky numbers, is null if numbers could not be read
      */
     public ArrayList<Integer> getUnluckyNumbersList(){
+        QuicktipLogger.info("Attempting to read unlucky numbers.");
         ArrayList<Integer> savedUnluckyNumbers = new ArrayList<>();
 
         try (Scanner reader = new Scanner(unluckyNumbers).useDelimiter(",")) {
@@ -65,9 +66,9 @@ public class UnluckyNumbersService {
             }
         } catch (FileNotFoundException e) {
             savedUnluckyNumbers = null;
-            System.out.println("An error occurred while attempting to read from " + unluckyNumbers.getName() + ".");
-            e.printStackTrace();
+            QuicktipLogger.warn("An error occurred while attempting to read from " + unluckyNumbers.getName() + ".", e);
         }
+        QuicktipLogger.info("Returning read unlucky numbers.");
         return savedUnluckyNumbers;
     }
 
@@ -77,13 +78,14 @@ public class UnluckyNumbersService {
      * @return bool value - true if deletion was successful, otherwise false
      */
     public boolean deleteUnluckyNumbers(){
+        QuicktipLogger.info("Attempting to delete unlucky numbers.");
         boolean success = false;
         try(FileWriter writer = new FileWriter(unluckyNumbers, false)) {
             writer.write("");
             success = true;
+            QuicktipLogger.info("Succeeded in deleting unlucky numbers.");
         } catch (IOException e) {
-            System.out.println("An error occurred while attempting to delete numbers in " + unluckyNumbers.getName() + ".");
-            e.printStackTrace();
+            QuicktipLogger.warn("An error occurred while attempting to delete numbers in " + unluckyNumbers.getName() + ".", e);
         }
         return success;
     }
