@@ -12,6 +12,7 @@ Dies ist ein Quicktipp-Generator für Lotto und Eurojackpot.
 ## Beschreibung
 
 Keller's Quicktips ist eine Java-basierte Kommandozeilen-Applikation, die es erlaubt, Quicktipps für Lotto- und Eurojackpotspiele zu generieren.
+
 Es ist möglich Unglückszahlen zu speichern, löschen und aktualisieren, sodass diese Zahlen nicht in den generierten Quicktipps enthalten sind.
 
 ## Funktionen
@@ -29,27 +30,28 @@ Es ist möglich Unglückszahlen zu speichern, löschen und aktualisieren, sodass
       
        javac main/java/*.java
        
-5. Navigieren Sie in den Überordner vom `main`-Ordner.
-6. Starten Sie die Applikation mit dem folgenden Kommando. 
+5. Sie können die Applikation mit dem folgenden Kommando starten: 
 
 	   java main/java/QuicktipGenerator
 
-   Zusätzlich kann die Option `lotto` bzw. `eurojackpot` ausgewählt werden, um das Spiel zu wählen, für das der erste Quicktipp generiert wird; per default wird ohne Angabe eines Parameters `lotto` gewählt. Also bspw.:
+   Zusätzlich kann die Option `lotto` bzw. `eurojackpot` angegeben werden, um das Spiel zu wählen, für das der erste Quicktipp generiert wird. Z.B.:
       
        java main/java/QuicktipGenerator eurojackpot
    
-   Außerdem kann eine Reihe von (bis zu sechs) neuen Unglückszahlen direkt beim Start angegeben werden, welche auch direkt bei der Generierung des ersten Quicktipps berücksichtigt werden. Wichtig ist, dass sie die Zahlen mit Kommata trennen und keine Leerzeichen zwischen den einzelnen Zahlen und Kommata einfügen. Also bspw.:
+   Standardmäßig wird ohne explizite Angabe eines derartigen Spielparameters `lotto` gewählt.
+   
+   Desweiteren kann eine Reihe von (bis zu sechs) neuen Unglückszahlen direkt beim Start angegeben werden, welche auch direkt bei der Generierung des ersten Quicktipps berücksichtigt werden. Wichtig ist, dass Sie die Zahlen mit Kommata trennen und keine Leerzeichen zwischen den einzelnen Zahlen und Kommata einfügen. Also bspw.:
    
        java main/java/QuicktipGenerator 13,26,39
 	
-   Desweiteren können sie beim Start eine beide Parameter angeben. Bspw.:
+   Außerdem können sie beim Start sowohl das Spiel als auch neue Unglückszahlen gleichzeitig angeben. Bspw.:
    
        java main/java/QuicktipGenerator lotto 14,28,42
 
 ## Nutzung
 
 - Sobald die Applikation gestartet wurde, wird eine Tippreihe für das jeweilige Spiel direkt generiert und angezeigt.
-- Danach wird Ihnen ein Menü präsentiert, mit dem Sie auswählen können, für welches Spiel (Lotto oder Eurojackpot) Sie gerne (noch) einen Quicktipp generieren würden. Desweiteren können die Unglückzahlen angezeigt, gelöscht und aktualisiert werden.
+- Danach wird Ihnen ein Menü präsentiert, mit dem Sie auswählen können, für welches Spiel (Lotto oder Eurojackpot) Sie gerne noch einen Quicktipp generieren würden. Desweiteren können die Unglückzahlen angezeigt, gelöscht und aktualisiert werden.
 - Wählen Sie eine Option aus, indem Sie das korrespondierende Wort im Terminal eingeben und drücken Sie die `Enter`-Taste.
 - Für die Eingabe neuer Unglückszahlen wird ein Untermenü geöffnet, hier können Sie neue Zahlen eingeben und diese speichern oder den Vorgang abbrechen und zum Hauptmenü zurückkehren.
 - Wenn Sie fertig sind, lässt sich die Applikation mit `exit` schließen.
