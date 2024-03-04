@@ -1,6 +1,8 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Scanner;
 
 /**
@@ -30,13 +32,49 @@ public class GeneratorController {
     private static final String DONE = "done";
     private static final String ABORT = "abort";
 
-    public GeneratorController(Scanner scanner, UnluckyNumbersService unluckyNumbersService, String game) {
+    public GeneratorController(Scanner scanner, UnluckyNumbersService unluckyNumbersService, String[] args) {
         GeneratorController.scanner = scanner;
         GeneratorController.unluckyService = unluckyNumbersService;
         System.out.println("Willkommen beim Quicktipp-Generator 'Keller's Quicktips'!\n");
+
+        String game = LOTTO;
+        ArrayList<Integer> newUnluckyNumbersList = new ArrayList<>();
+        game = processArguments(args, game, newUnluckyNumbersList);
+        saveUnluckyNumbers(newUnluckyNumbersList);
         startGeneration(game);
         printOptions();
         mainLoop();
+    }
+
+    /**
+     * processArguments parses the arguments given by the user at the start of the program and matches them to either
+     * a sequence of numbers which are then pared into a list which is saved as the new unlucky numbers or
+     * the game parameters which determines which game the first tip is generated for.
+     * If an entered argument is not recognised then that information is printed to the console and the argument is ignored.
+     * If too many (>2) arguments are entered, all but the first two are ignored and that information is printed to the console.
+     * @param args - arguments given by the user
+     * @param game - the game for the first quicktip (default is lotto, is only changed if user entered a game parameter)
+     * @param newUnluckyNumbersList - list for new unlucky numbers
+     * @return
+     */
+    private String processArguments(String[] args, String game, ArrayList<Integer> newUnluckyNumbersList) {
+        for (int i = 0; i < args.length; i++) {
+            if (i >= 2) {
+                System.out.println("Der Quicktip Generator akzeptiert nur zwei Aufrufparameter. Nur die ersten beiden werden berücksichtigt.");
+            } else if (args[i].matches("[0-9]+(,[0-9]+)*")) {
+                String[] newNumbers = args[i].trim().split(",");
+                for (String n : newNumbers){
+                    int newNumber = Integer.parseInt(n);
+                    checkNumberAndAddToUnluckyList(newNumber, newUnluckyNumbersList);
+                }
+            } else if (args[i].equalsIgnoreCase("lotto") || args[i].equalsIgnoreCase("eurojackpot")) {
+                game = args[i];
+            } else {
+                System.out.println("Der eingegebene Parameter '" + args[i] + "' ist ungültig. Die gültigen Parameter " +
+                        "sind '" + LOTTO + "', '" + EURO + "' und Zahlenreihen (durch Kommata getrennt und ohne Leerzeichen).\n");
+            }
+        }
+        return game;
     }
 
     /**
@@ -73,10 +111,6 @@ public class GeneratorController {
         switch (game) {
             case LOTTO -> new LottoGenerator(unluckyService).printTip();
             case EURO -> new EurojackpotGenerator(unluckyService).printTip();
-            default -> {
-                System.out.println("Der eingegebene Parameter war ungültig. " +
-                                   "Die gültigen Parameter sind '" + LOTTO + "' und '" + EURO + "'.\n");
-            }
         }
     }
 
@@ -119,13 +153,7 @@ public class GeneratorController {
             } else {
                 switch (userInput) {
                     case ABORT -> System.out.println("Es wurden keine neuen Unglückszahlen gespeichert.");
-                    case DONE -> {
-                        if (newUnluckyNumbersList.isEmpty()) {
-                            System.out.println("Es wurden keine neuen Unglückszahlen eingegeben, die gespeichert werden könnten.");
-                        } else {
-                            saveUnluckyNumbers(newUnluckyNumbersList);
-                        }
-                    }
+                    case DONE -> saveUnluckyNumbers(newUnluckyNumbersList);
                     case HELP -> printUnluckyOptions();
                     default -> {
                         System.out.println("Die Eingabe '" + userInput + "' korrespondiert mit keiner der angebotenen Optionen.");
@@ -150,7 +178,7 @@ public class GeneratorController {
             System.out.println("Es wurden bereits " + MAX_UNLUCKY_NUMBERS + " Unglückszahlen eingegegeben. " +
                                "Mehr können nicht eingegeben werden.\n" +
                     "Die bereits eingegebenen Unglückszahlen sind " + newUnluckyNumbersList + "\n" +
-                    "Sie können diese mit " + DONE + " speichern oder mit '" + ABORT + "' verwerfen.");
+                    "Sie können diese mit '" + DONE + "' speichern oder mit '" + ABORT + "' verwerfen.");
         } else if (newUnluckyNumbersList.contains(newNumber)) {
             System.out.println("Die eingegebene Zahl '" + newNumber + "' wurde bereits hinzugefügt");
         } else if (newNumber > NUMBER_SCOPE){
@@ -163,13 +191,18 @@ public class GeneratorController {
 
     /**
      * saveUnluckyNumbers calls the method saveUnluckyNumbers of the UnluckyNumbersService instance saved to the field
-     * unluckyService and passes the newUnluckyNumbersList to it.
-     * It also tells the user that the unlucky numbers were saved.
+     * unluckyService and passes the sorted newUnluckyNumbersList to it.
+     * It also tells the user if the unlucky numbers were saved.
      * @param newUnluckyNumbersList - ArrayList of numbers to be saved
      */
     private void saveUnluckyNumbers(ArrayList<Integer> newUnluckyNumbersList) {
-        unluckyService.saveUnluckyNumbers(newUnluckyNumbersList);
-        System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
+        if (newUnluckyNumbersList.isEmpty()) {
+            System.out.println("Es wurden keine neuen Unglückszahlen eingegeben, die gespeichert werden könnten.");
+        } else {
+            Collections.sort(newUnluckyNumbersList);
+            unluckyService.saveUnluckyNumbers(newUnluckyNumbersList);
+            System.out.println("Die neuen Unglückszahlen " + newUnluckyNumbersList + " wurden gespeichert.");
+        }
     }
 
     /**
@@ -221,13 +254,5 @@ public class GeneratorController {
      */
     public static UnluckyNumbersService getUnluckyService() {
         return unluckyService;
-    }
-
-    /**
-     * Setter method for unluckyService field
-     * @param fileName - String containing the relative path to the .txt-document the UnluckyNumbersService should use to store numbers
-     */
-    public static void setUnluckyService(String fileName) {
-        unluckyService = new UnluckyNumbersService(fileName);
     }
 }
